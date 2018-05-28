@@ -34,7 +34,7 @@ public class AppJFrame extends javax.swing.JFrame {
         DefaultListModel<String> listModelEquipos = new DefaultListModel<>();
         // Obtener el orden seleccionado
         int orden = (jRadioButtonOrdenNombre.isSelected()) ? Equipo.ORDEN_NOMBRE : Equipo.ORDEN_PAIS;
-        //Obtener equipos
+        //Obtener equiposF
         List<Equipo> listaEquipo = Equipo.obtenerEquipos(busqueda, orden);
 
         // vaciar la lista de ids de equiopos
@@ -328,6 +328,7 @@ public class AppJFrame extends javax.swing.JFrame {
         Equipo e = new Equipo();
         EquipoJDialog dialogoEquipo = new EquipoJDialog(this, e);
         dialogoEquipo.setVisible(true);
+        actualizarListaEquipos();
     }//GEN-LAST:event_jButtonAnnandirEquipoActionPerformed
 
     private void jButtonEditarEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarEquipoActionPerformed
@@ -359,6 +360,9 @@ public class AppJFrame extends javax.swing.JFrame {
 
     private void jButtonEliminarEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarEquipoActionPerformed
         int index = jListEquipos.getSelectedIndex();
+        for (int e : listaIdEquipos){
+            System.out.print(e);
+        }
         if (index >= 0) {
             if (JOptionPane.showConfirmDialog(this, "¿Está seguro?", "Confirmación", JOptionPane.YES_OPTION) == JOptionPane.YES_OPTION) {
                 int id = listaIdEquipos.get(index);
@@ -368,7 +372,7 @@ public class AppJFrame extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un equipo", "Atención", JOptionPane.WARNING_MESSAGE);
         }
-
+        actualizarListaEquipos();
     }//GEN-LAST:event_jButtonEliminarEquipoActionPerformed
 
     /**
