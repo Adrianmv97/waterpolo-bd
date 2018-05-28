@@ -113,7 +113,21 @@ public class Equipo {
     }
 
     public boolean update() {
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            
+            String sqlUpdate = "UPDATE equipo SET nombre= ? , ciudad = ? , pais = ? WHERE id= ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
+                stmt.setString(1, getNombre());
+                stmt.setString(2, getCiudad());
+                stmt.setString(3, getPais());
+                stmt.setInt(4, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            System.err.println("Método update: Eror al visualizar/" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean delete() {

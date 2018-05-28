@@ -342,7 +342,7 @@ public class AppJFrame extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un equipo", "Atención", JOptionPane.WARNING_MESSAGE);
         }
-
+        actualizarListaEquipos();
     }//GEN-LAST:event_jButtonEditarEquipoActionPerformed
 
     private void jButtonAnnandirJugadorEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnnandirJugadorEquipoActionPerformed

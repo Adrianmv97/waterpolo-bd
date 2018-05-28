@@ -163,6 +163,9 @@ public class EquipoJDialog extends javax.swing.JDialog {
             equipo.setPais(jTextFieldPais.getText());
             exito = equipo.create();
         } else {
+            equipo.setNombre(jTextFieldNombre.getText());
+            equipo.setCiudad(jTextFieldCiudad.getText());
+            equipo.setPais(jTextFieldPais.getText());
             exito = equipo.update();
         }
         this.accion = ACCION_GUARDAR;
