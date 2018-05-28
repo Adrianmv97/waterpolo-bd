@@ -49,6 +49,14 @@ public class Jugador {
         this.idEquipo = idEquipo;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -84,19 +92,77 @@ public class Jugador {
     // --------- OPERACIONES BD ----------------------------------------
     // ---------- CRUD BÁSICO
     public boolean create() {
-        return true;
+         boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "INSERT INTO jugador (nombre,apellidos,edad,idquipo) VALUES (?,?,?,?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, getNombre());
+                stmt.setString(2, getApellidos());
+                stmt.setInt(3, getEdad());
+                stmt.setInt(4, getIdEquipo());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método create: Error al insertar equipos /" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean retrieve() {
-        return true;
+         boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "SELECT nombre,apellidos,edad,idequipo FROM jugador WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, getId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    rs.next();
+                    setNombre(rs.getString("nombre"));
+                    setApellidos(rs.getString("apellidos"));
+                    setEdad(rs.getInt("edad"));
+                    setIdEquipo(rs.getInt("idequipo"));
+
+                }
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean update() {
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            
+            String sqlUpdate = "UPDATE jugador SET nombre= ? , apellidos = ? , edad = ?, idequipo = ? WHERE id= ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
+                stmt.setString(1, getNombre());
+                stmt.setString(2, getApellidos());
+                stmt.setInt(3, getEdad());
+                stmt.setInt(4, getIdEquipo());
+                stmt.setInt(5, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            System.err.println("Método update: Eror al visualizar/" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean delete() {
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sqlDelete = "DELETE FROM jugador WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlDelete)) {
+                stmt.setInt(1, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método delete: Eror al borrar/" + ex.getMessage());
+        }
+        return ok;
     }
 
     // ----------- Otras, de clase, no relacionadas con ÉSTE (this) objeto
@@ -106,8 +172,19 @@ public class Jugador {
         Master: 26 años o más. */
 
         List<Jugador> resultado = new ArrayList<>();
-        resultado.add(new Jugador("Paco", "López", 19));
-        resultado.add(new Jugador("Luisa", "Martínez", 21));
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        resultado.add(new Jugador(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellidos"),
+                                rs.getInt("edad"), rs.getInt("idequipo")));
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+        }
         return resultado;
     }
 }
