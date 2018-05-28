@@ -86,18 +86,30 @@ public class Equipo {
             }
         } catch (SQLException ex) {
             ok = false;
-            System.err.println("Método create: Error al insertar equipos/" + ex.getMessage());
+            System.err.println("Método create: Error al insertar equipos /" + ex.getMessage());
         }
         return ok;
     }
 
     public boolean retrieve() {
-        
-        setId(33);
-        setNombre("Equipo ejemplo");
-        setCiudad("Ciudad ejemplo");
-        setPais("Pais ejemplo");
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "SELECT nombre,ciudad,pais FROM equipo WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, getId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    rs.next();
+                    setNombre(rs.getString("nombre"));
+                    setCiudad(rs.getString("ciudad"));
+                    setPais(rs.getString("pais"));
+
+                }
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean update() {
@@ -105,7 +117,18 @@ public class Equipo {
     }
 
     public boolean delete() {
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sqlDelete = "DELETE FROM equipo WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlDelete)) {
+                stmt.setInt(1, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método delete: Eror al borrar/" + ex.getMessage());
+        }
+        return ok;
     }
 
     // ----------- Otras, de instancia, relacionadas con la fk
@@ -128,10 +151,20 @@ public class Equipo {
         // y si tiene algo con WHERE y varios LIKEs
         // POR HACER
         List<Equipo> resultado = new ArrayList<>();
-        resultado.add(
-                new Equipo(1, "Halcones calvos", "Getafe", "España"));
-        resultado.add(
-                new Equipo(2, "Dumma den som läser den", "Visby", "Suecia"));
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "SELECT id,nombre,ciudad,pais FROM equipo";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        resultado.add(new Equipo(rs.getInt("id"), rs.getString("nombre"), rs.getString("ciudad"), rs.getString("pais")));
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+        }
         return resultado;
 
     }
