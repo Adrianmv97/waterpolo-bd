@@ -75,12 +75,24 @@ public class Equipo {
 
     // ---------- CRUD BÁSICO
     public boolean create() {
-
-        return true;
+        boolean ok = true; // Supongo que la operación va a ir ok;
+        try (Connection conn = ConexionBd.obtener()) {
+            String sql = "INSERT INTO equipo (nombre,ciudad,pais) VALUES (?,?,?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, getNombre());
+                stmt.setString(2, getCiudad());
+                stmt.setString(3, getPais());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            ok = false;
+            System.err.println("Método create: Error al insertar equipos/" + ex.getMessage());
+        }
+        return ok;
     }
 
     public boolean retrieve() {
-        // POR HACER
+        
         setId(33);
         setNombre("Equipo ejemplo");
         setCiudad("Ciudad ejemplo");
