@@ -62,11 +62,13 @@ public class AppJFrame extends javax.swing.JFrame {
 
         List<Jugador> listaJugadores = Jugador.obtenerJugadores(busqueda, rootPaneCheckingEnabled, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
 
+        // vaciar la lista de ids de equiopos
+        listaIdJugadores.clear();
         // añadir cadenas al modelo e ir guardando los id de los equipos
         for (Jugador e : listaJugadores) {
             listModelJugadores.addElement(String.format("%s - %s (%s)",
                     e.getNombre(), e.getApellidos(), e.getEdad()));
-            listaIdEquipos.add(e.getId());
+            listaIdJugadores.add(e.getId());
 
         }
     }
@@ -113,11 +115,6 @@ public class AppJFrame extends javax.swing.JFrame {
             }
         });
 
-        jListEquipos.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jListEquipos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jListEquipos.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
@@ -239,10 +236,10 @@ public class AppJFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Equipos", jPanel1);
 
-        jListJugadores.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        jListJugadores.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jListJugadoresValueChanged(evt);
+            }
         });
         jScrollPane3.setViewportView(jListJugadores);
 
@@ -331,7 +328,8 @@ public class AppJFrame extends javax.swing.JFrame {
             return; // no nos interesa
         }
         int index = jListEquipos.getSelectedIndex();
-        Equipo e = new Equipo(index);
+        int id = listaIdEquipos.get(index);
+        Equipo e = new Equipo(id);
         e.retrieve();
         if (index >= 0) {
             DefaultListModel<String> listModelJugadores = new DefaultListModel<>();
@@ -408,8 +406,15 @@ public class AppJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEditarJugadorActionPerformed
 
     private void jButtonAnnandirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnnandirActionPerformed
-        // TODO add your handling code here:
+        Jugador j = new Jugador();
+        JugadorCreatorJDialog dialogoJugador = new JugadorCreatorJDialog(this, j);
+        dialogoJugador.setVisible(true);
+        actualizarListaJugadores();
     }//GEN-LAST:event_jButtonAnnandirActionPerformed
+
+    private void jListJugadoresValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListJugadoresValueChanged
+        
+    }//GEN-LAST:event_jListJugadoresValueChanged
 
     /**
      * @param args the command line arguments

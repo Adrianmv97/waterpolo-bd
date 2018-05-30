@@ -150,8 +150,9 @@ public class Equipo {
         // POR HACER.
         List<Jugador> resultado = new ArrayList<>();
          try (Connection conn = ConexionBd.obtener()) {
-            String sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador";
+            String sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador WHERE idequipo = ? ";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, getId());
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         resultado.add(new Jugador(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellidos"),
@@ -160,7 +161,7 @@ public class Equipo {
                 }
             }
         } catch (SQLException ex) {
-            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+            System.err.println("Método getJugadores: Eror al localizar equipo /" + ex.getMessage());
         }
         return resultado;
     }

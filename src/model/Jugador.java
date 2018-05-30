@@ -94,7 +94,7 @@ public class Jugador {
     public boolean create() {
          boolean ok = true; // Supongo que la operación va a ir ok;
         try (Connection conn = ConexionBd.obtener()) {
-            String sql = "INSERT INTO jugador (nombre,apellidos,edad,idquipo) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO jugador (nombre,apellidos,edad,idequipo) VALUES (?,?,?,?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, getNombre());
                 stmt.setString(2, getApellidos());
