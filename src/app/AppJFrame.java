@@ -42,8 +42,8 @@ public class AppJFrame extends javax.swing.JFrame {
 
         // añadir cadenas al modelo e ir guardando los id de los equipos
         for (Equipo e : listaEquipo) {
-            listModelEquipos.addElement(String.format("%s - %s (%s)",
-                    e.getNombre(), e.getCiudad(), e.getPais()));
+            listModelEquipos.addElement(String.format("%s - %s (%s)(%d)",
+                    e.getNombre(), e.getCiudad(), e.getPais(), e.getId()));
             listaIdEquipos.add(e.getId());
 
         }
@@ -66,10 +66,15 @@ public class AppJFrame extends javax.swing.JFrame {
         listaIdJugadores.clear();
         // añadir cadenas al modelo e ir guardando los id de los equipos
         for (Jugador e : listaJugadores) {
-            listModelJugadores.addElement(String.format("%s - %s (%s)",
+            listModelJugadores.addElement(String.format("%s - %s (%d)",
                     e.getNombre(), e.getApellidos(), e.getEdad()));
             listaIdJugadores.add(e.getId());
 
+        }
+        jListJugadores.setModel(listModelJugadores);
+        
+        for (int x : listaIdJugadores){
+            System.out.print(x);
         }
     }
 
@@ -98,7 +103,6 @@ public class AppJFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButtonEliminarEquipo = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jButtonAnnandirJugadorEquipo = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jListJugadores = new javax.swing.JList<>();
@@ -165,13 +169,6 @@ public class AppJFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Jugadores del equipo:");
 
-        jButtonAnnandirJugadorEquipo.setText("Añadir Jugador a Equipo");
-        jButtonAnnandirJugadorEquipo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAnnandirJugadorEquipoActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -203,8 +200,7 @@ public class AppJFrame extends javax.swing.JFrame {
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jButtonAnnandirJugadorEquipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(0, 65, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -219,13 +215,11 @@ public class AppJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(8, 8, 8)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonAnnandirJugadorEquipo)))
+                        .addComponent(jScrollPane2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonAnnandirEquipo)
@@ -367,20 +361,6 @@ public class AppJFrame extends javax.swing.JFrame {
         actualizarListaEquipos();
     }//GEN-LAST:event_jButtonEditarEquipoActionPerformed
 
-    private void jButtonAnnandirJugadorEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnnandirJugadorEquipoActionPerformed
-        int index = jListEquipos.getSelectedIndex();
-        if (index >= 0) {
-            int id = listaIdEquipos.get(index);
-            Jugador j = new Jugador();
-            j.setIdEquipo(id);
-            JugadorJDialog dialogoJugador = new JugadorJDialog(this, j);
-            dialogoJugador.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un equipo", "Atención", JOptionPane.WARNING_MESSAGE);
-        }
-        actualizarListaJugadores();
-    }//GEN-LAST:event_jButtonAnnandirJugadorEquipoActionPerformed
-
     private void jButtonEliminarEquipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarEquipoActionPerformed
         int index = jListEquipos.getSelectedIndex();
         for (int e : listaIdEquipos) {
@@ -399,21 +379,30 @@ public class AppJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEliminarEquipoActionPerformed
 
     private void jButtonEditarJugadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarJugadorActionPerformed
-        Jugador e = new Jugador();
-        JugadorJDialog dialogoJugador = new JugadorJDialog(this, e);
-        dialogoJugador.setVisible(true);
+
+
+        int index = jListJugadores.getSelectedIndex();
+        if (index >= 0) {
+            int id = listaIdJugadores.get(index);
+            Jugador j = new Jugador(id);
+            j.retrieve();
+            JugadorJDialog dialogoJugador = new JugadorJDialog(this, j);
+            dialogoJugador.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un equipo", "Atención", JOptionPane.WARNING_MESSAGE);
+        }
         actualizarListaEquipos();
     }//GEN-LAST:event_jButtonEditarJugadorActionPerformed
 
     private void jButtonAnnandirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAnnandirActionPerformed
         Jugador j = new Jugador();
-        JugadorCreatorJDialog dialogoJugador = new JugadorCreatorJDialog(this, j);
+        JugadorJDialog dialogoJugador = new JugadorJDialog(this, j);
         dialogoJugador.setVisible(true);
         actualizarListaJugadores();
     }//GEN-LAST:event_jButtonAnnandirActionPerformed
 
     private void jListJugadoresValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListJugadoresValueChanged
-        
+
     }//GEN-LAST:event_jListJugadoresValueChanged
 
     /**
@@ -456,7 +445,6 @@ public class AppJFrame extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroupOrden;
     private javax.swing.JButton jButtonAnnandir;
     private javax.swing.JButton jButtonAnnandirEquipo;
-    private javax.swing.JButton jButtonAnnandirJugadorEquipo;
     private javax.swing.JButton jButtonEditarEquipo;
     private javax.swing.JButton jButtonEditarJugador;
     private javax.swing.JButton jButtonEliminarEquipo;
