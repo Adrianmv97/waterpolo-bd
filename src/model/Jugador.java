@@ -183,7 +183,6 @@ public class Jugador {
                 if (!busqueda.equals("")) {
                     stmt.setString(1, '%' + busqueda + '%');
                     stmt.setString(2, '%' + busqueda + '%');
-                    stmt.setInt(3, '%' + Integer.parseInt(busqueda) + '%');
                 }
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {

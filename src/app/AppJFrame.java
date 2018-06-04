@@ -42,8 +42,8 @@ public class AppJFrame extends javax.swing.JFrame {
 
         // añadir cadenas al modelo e ir guardando los id de los equipos
         for (Equipo e : listaEquipo) {
-            listModelEquipos.addElement(String.format("%s - %s (%s)(%d)",
-                    e.getNombre(), e.getCiudad(), e.getPais(), e.getId()));
+            listModelEquipos.addElement(String.format("%s - %s (%s)",
+                    e.getNombre(), e.getCiudad(), e.getPais()));
             listaIdEquipos.add(e.getId());
 
         }
