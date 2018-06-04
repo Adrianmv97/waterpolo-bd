@@ -53,14 +53,13 @@ public class AppJFrame extends javax.swing.JFrame {
     }
 
     public void actualizarListaJugadores() {
-        // Obtener cadena de búsqueda
-        String busqueda = jTextFieldBuscarEquipos.getText();
+        
         // Crear modelo para la lista
         DefaultListModel<String> listModelJugadores = new DefaultListModel<>();
         // Obtener el orden seleccionado
-        int orden = (jRadioButtonOrdenNombre.isSelected()) ? Equipo.ORDEN_NOMBRE : Equipo.ORDEN_PAIS;
+        
 
-        List<Jugador> listaJugadores = Jugador.obtenerJugadores(busqueda, rootPaneCheckingEnabled, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
+        List<Jugador> listaJugadores = Jugador.obtenerJugadores(jTextFieldBuscarJugadores.getText(), rootPaneCheckingEnabled, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
 
         // vaciar la lista de ids de equiopos
         listaIdJugadores.clear();
@@ -72,10 +71,6 @@ public class AppJFrame extends javax.swing.JFrame {
 
         }
         jListJugadores.setModel(listModelJugadores);
-        
-        for (int x : listaIdJugadores){
-            System.out.print(x);
-        }
     }
 
     /**
@@ -146,9 +141,23 @@ public class AppJFrame extends javax.swing.JFrame {
 
         jLabelLBuscar.setText("Buscar");
 
+        jTextFieldBuscarEquipos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldBuscarEquiposKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldBuscarEquiposKeyReleased(evt);
+            }
+        });
+
         buttonGroupOrden.add(jRadioButtonOrdenNombre);
         jRadioButtonOrdenNombre.setSelected(true);
         jRadioButtonOrdenNombre.setText("Nombre");
+        jRadioButtonOrdenNombre.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButtonOrdenNombreMouseClicked(evt);
+            }
+        });
         jRadioButtonOrdenNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonOrdenNombreActionPerformed(evt);
@@ -157,6 +166,11 @@ public class AppJFrame extends javax.swing.JFrame {
 
         buttonGroupOrden.add(jRadioButtonOrdenPais);
         jRadioButtonOrdenPais.setText("Pais");
+        jRadioButtonOrdenPais.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jRadioButtonOrdenPaisMouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("Orden:");
 
@@ -253,6 +267,15 @@ public class AppJFrame extends javax.swing.JFrame {
 
         jLabelLBuscarJugador.setText("Buscar");
 
+        jTextFieldBuscarJugadores.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldBuscarJugadoresKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldBuscarJugadoresKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -321,18 +344,21 @@ public class AppJFrame extends javax.swing.JFrame {
         if (evt.getValueIsAdjusting()) { // Un evento transitorio en seleccion múltiple
             return; // no nos interesa
         }
+
         int index = jListEquipos.getSelectedIndex();
-        int id = listaIdEquipos.get(index);
-        Equipo e = new Equipo(id);
-        e.retrieve();
         if (index >= 0) {
-            DefaultListModel<String> listModelJugadores = new DefaultListModel<>();
-            List<Jugador> listaJugadores = e.getJugadores();
-            for (Jugador j : listaJugadores) {
-                listModelJugadores.addElement(String.format("%s, %s (%d)",
-                        j.getApellidos(), j.getNombre(), j.getEdad()));
+            int id = listaIdEquipos.get(index);
+            Equipo e = new Equipo(id);
+            e.retrieve();
+            if (index >= 0) {
+                DefaultListModel<String> listModelJugadores = new DefaultListModel<>();
+                List<Jugador> listaJugadores = e.getJugadores();
+                for (Jugador j : listaJugadores) {
+                    listModelJugadores.addElement(String.format("%s, %s (%d)",
+                            j.getApellidos(), j.getNombre(), j.getEdad()));
+                }
+                jListJugadoresEquipo.setModel(listModelJugadores);
             }
-            jListJugadoresEquipo.setModel(listModelJugadores);
         }
     }//GEN-LAST:event_jListEquiposValueChanged
 
@@ -380,7 +406,6 @@ public class AppJFrame extends javax.swing.JFrame {
 
     private void jButtonEditarJugadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditarJugadorActionPerformed
 
-
         int index = jListJugadores.getSelectedIndex();
         if (index >= 0) {
             int id = listaIdJugadores.get(index);
@@ -404,6 +429,30 @@ public class AppJFrame extends javax.swing.JFrame {
     private void jListJugadoresValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListJugadoresValueChanged
 
     }//GEN-LAST:event_jListJugadoresValueChanged
+
+    private void jTextFieldBuscarEquiposKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarEquiposKeyPressed
+        actualizarListaEquipos();
+    }//GEN-LAST:event_jTextFieldBuscarEquiposKeyPressed
+
+    private void jTextFieldBuscarEquiposKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarEquiposKeyReleased
+        actualizarListaEquipos();
+    }//GEN-LAST:event_jTextFieldBuscarEquiposKeyReleased
+
+    private void jRadioButtonOrdenNombreMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonOrdenNombreMouseClicked
+        actualizarListaEquipos();
+    }//GEN-LAST:event_jRadioButtonOrdenNombreMouseClicked
+
+    private void jRadioButtonOrdenPaisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRadioButtonOrdenPaisMouseClicked
+        actualizarListaEquipos();
+    }//GEN-LAST:event_jRadioButtonOrdenPaisMouseClicked
+
+    private void jTextFieldBuscarJugadoresKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarJugadoresKeyPressed
+        actualizarListaJugadores();
+    }//GEN-LAST:event_jTextFieldBuscarJugadoresKeyPressed
+
+    private void jTextFieldBuscarJugadoresKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldBuscarJugadoresKeyReleased
+        actualizarListaJugadores();
+    }//GEN-LAST:event_jTextFieldBuscarJugadoresKeyReleased
 
     /**
      * @param args the command line arguments

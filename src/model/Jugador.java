@@ -21,9 +21,9 @@ public class Jugador {
     private int idEquipo;
 
     public Jugador() {
-        
+
     }
-    
+
     public Jugador(int id) {
         this.id = id;
     }
@@ -92,7 +92,7 @@ public class Jugador {
     // --------- OPERACIONES BD ----------------------------------------
     // ---------- CRUD BÁSICO
     public boolean create() {
-         boolean ok = true; // Supongo que la operación va a ir ok;
+        boolean ok = true; // Supongo que la operación va a ir ok;
         try (Connection conn = ConexionBd.obtener()) {
             String sql = "INSERT INTO jugador (nombre,apellidos,edad,idequipo) VALUES (?,?,?,?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -110,7 +110,7 @@ public class Jugador {
     }
 
     public boolean retrieve() {
-         boolean ok = true; // Supongo que la operación va a ir ok;
+        boolean ok = true; // Supongo que la operación va a ir ok;
         try (Connection conn = ConexionBd.obtener()) {
             String sql = "SELECT nombre,apellidos,edad,idequipo FROM jugador WHERE id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -134,7 +134,7 @@ public class Jugador {
     public boolean update() {
         boolean ok = true; // Supongo que la operación va a ir ok;
         try (Connection conn = ConexionBd.obtener()) {
-            
+
             String sqlUpdate = "UPDATE jugador SET nombre= ? , apellidos = ? , edad = ?, idequipo = ? WHERE id= ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
                 stmt.setString(1, getNombre());
@@ -167,14 +167,24 @@ public class Jugador {
 
     // ----------- Otras, de clase, no relacionadas con ÉSTE (this) objeto
     public static List<Jugador> obtenerJugadores(String busqueda, boolean esJunior, boolean esClass, boolean esMaster) {
-        /* Junior:  14 años o más y menos de 18.
-        Class: 18 o más y menos de 26.
-        Master: 26 años o más. */
+        
+        String sql;
+
+        if (busqueda.equals("")) {
+            sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador";
+        } else {
+            sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador WHERE nombre LIKE ? OR apellidos LIKE ?";
+        }
 
         List<Jugador> resultado = new ArrayList<>();
+        
         try (Connection conn = ConexionBd.obtener()) {
-            String sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                if (!busqueda.equals("")) {
+                    stmt.setString(1, '%' + busqueda + '%');
+                    stmt.setString(2, '%' + busqueda + '%');
+                    stmt.setInt(3, '%' + Integer.parseInt(busqueda) + '%');
+                }
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         resultado.add(new Jugador(rs.getInt("id"), rs.getString("nombre"), rs.getString("apellidos"),
@@ -183,7 +193,7 @@ public class Jugador {
                 }
             }
         } catch (SQLException ex) {
-            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+            ex.printStackTrace();
         }
         return resultado;
     }

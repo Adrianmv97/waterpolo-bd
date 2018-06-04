@@ -115,7 +115,7 @@ public class Equipo {
     public boolean update() {
         boolean ok = true; // Supongo que la operación va a ir ok;
         try (Connection conn = ConexionBd.obtener()) {
-            
+
             String sqlUpdate = "UPDATE equipo SET nombre= ? , ciudad = ? , pais = ? WHERE id= ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlUpdate)) {
                 stmt.setString(1, getNombre());
@@ -149,7 +149,7 @@ public class Equipo {
     public List<Jugador> getJugadores() {
         // POR HACER.
         List<Jugador> resultado = new ArrayList<>();
-         try (Connection conn = ConexionBd.obtener()) {
+        try (Connection conn = ConexionBd.obtener()) {
             String sql = "SELECT id,nombre,apellidos,edad,idequipo FROM jugador WHERE idequipo = ? ";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, getId());
@@ -176,20 +176,40 @@ public class Equipo {
         // Si la búsqueda es una cadena vacía lanzamos una select sin WHERE
         // y si tiene algo con WHERE y varios LIKEs
         // POR HACER
+        String sql;
+        if (busqueda.equals("")) {
+            sql = "SELECT id,nombre,ciudad,pais FROM equipo";
+        } else {
+            sql = "SELECT id, nombre ,ciudad ,pais FROM equipo WHERE nombre LIKE ? OR ciudad LIKE ? OR pais LIKE ?";
+        }
+
+        if (orden == ORDEN_NOMBRE) {
+            sql = sql + " ORDER BY nombre";
+        } else {
+            sql = sql + " ORDER BY pais";
+        }
+
         List<Equipo> resultado = new ArrayList<>();
-        boolean ok = true; // Supongo que la operación va a ir ok;
+
         try (Connection conn = ConexionBd.obtener()) {
-            String sql = "SELECT id,nombre,ciudad,pais FROM equipo";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                if (!busqueda.equals("")) {
+                    stmt.setString(1, '%' + busqueda + '%');
+                    stmt.setString(2, '%' + busqueda + '%');
+                    stmt.setString(3, '%' + busqueda + '%');
+                }
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
-                        resultado.add(new Equipo(rs.getInt("id"), rs.getString("nombre"), rs.getString("ciudad"), rs.getString("pais")));
+                        resultado.add(new Equipo(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
                     }
                 }
+
             }
+
         } catch (SQLException ex) {
-            ok = false;
-            System.err.println("Método retrieve: Eror al localizar equipo /" + ex.getMessage());
+
+            ex.printStackTrace();
+
         }
         return resultado;
 
